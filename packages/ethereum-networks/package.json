@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-networks",
   "umdName": "EthereumNetworks",
   "umdExport": "default",
-  "version": "0.4.25",
+  "version": "0.4.26-beta.5",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -17,9 +17,6 @@
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
-  "dependencies": {
-    "@babel/runtime": "^7.4.3"
-  },
   "engines": {
     "node": "~8.12.0"
   },
@@ -33,6 +30,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c"
+  }
 }

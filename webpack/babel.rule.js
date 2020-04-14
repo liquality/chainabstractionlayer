@@ -33,8 +33,8 @@ module.exports = (config = { target: 'web' }) => {
         [
           '@babel/preset-env', {
             debug: process.env.CI === 'true',
-            modules: false,
             exclude: ['transform-typeof-symbol'],
+            modules: false,
             targets
           }
         ]

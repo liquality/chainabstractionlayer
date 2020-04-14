@@ -1,8 +1,21 @@
+// for tests
+
 module.exports = function (api) {
   api.cache(true)
 
-  const presets = [ '@babel/preset-env' ]
-  const plugins = [ 'istanbul' ]
+  const presets = [
+    [
+      '@babel/preset-env', {
+        targets: {
+          node: true
+        }
+      }
+    ]
+  ]
+
+  const plugins = [
+    'istanbul'
+  ]
 
   return {
     presets,
