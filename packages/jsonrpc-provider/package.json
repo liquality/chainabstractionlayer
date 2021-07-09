@@ -25,7 +25,7 @@
     "@liquality/node-provider": "^1.4.4",
     "@types/lodash": "^4.14.168",
     "json-bigint": "^1.0.0",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
