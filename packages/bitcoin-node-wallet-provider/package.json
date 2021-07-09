@@ -29,7 +29,7 @@
     "@liquality/wallet-provider": "^1.4.4",
     "bignumber.js": "^9.0.0",
     "bitcoinjs-lib": "^5.2.0",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
