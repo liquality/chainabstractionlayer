@@ -28,7 +28,7 @@
     "@types/lodash": "^4.14.168",
     "bignumber.js": "^9.0.0",
     "eip55": "^1.0.3",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
