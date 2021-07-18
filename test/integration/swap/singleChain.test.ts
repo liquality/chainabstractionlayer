@@ -25,7 +25,7 @@ import {
   expectFee,
   TEST_TIMEOUT
 } from '../common'
-import { Transaction, BigNumber } from '../../../packages/types/lib'
+import { BigNumber, Transaction } from '../../../packages/types/lib'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
@@ -104,7 +104,7 @@ function testSwap(chain: Chain) {
     )
   })
 
-  if (chain.name !== 'near') {
+  if (chain.name !== 'near' && chain.name !== 'terra') {
     it('Refund fails after claim', async () => {
       const secretHash = crypto.sha256(mockSecret)
       const swapParams = await getSwapParams(chain, secretHash)
@@ -123,7 +123,7 @@ function testSwap(chain: Chain) {
         async () => {
           try {
             await refundAndVerify(chain, initiationTxId, swapParams)
-            // eslint-disable-next-line no-empty
+            /* eslint-disable-next-line no-empty */
           } catch (e) {} // Refund failing is ok
         },
         (before, after) => expect(after.eq(before)).to.be.true
@@ -135,7 +135,7 @@ function testSwap(chain: Chain) {
         async () => {
           try {
             await refundAndVerify(chain, initiationTxId, swapParams)
-            // eslint-disable-next-line no-empty
+            /* eslint-disable-next-line no-empty */
           } catch (__e) {} // Refund failing is ok
         },
         (before, after) => expect(after.eq(before)).to.be.true
@@ -273,6 +273,48 @@ function testNearRefund(chain: Chain) {
   })
 }
 
+function testTerraRefund(chain: Chain) {
+  it('Refund fails after claim', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain, secretHash)
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 20
+
+    const initiationTxId = await initiateAndVerify(chain, swapParams)
+
+    await expectBalance(
+      chain,
+      swapParams.recipientAddress,
+      async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
+      (before, after) => expect(after.gt(before)).to.be.true
+    )
+
+    let fee: BigNumber
+    await expectBalance(
+      chain,
+      swapParams.refundAddress,
+      async () => {
+        try {
+          await refundAndVerify(chain, initiationTxId, swapParams)
+        } catch (e) {
+          expect(e.response.data.error).include('Balance is 0')
+          fee = new BigNumber(0)
+        } // Refund failing is ok
+      },
+      (before, after) => expect(fee ? after.plus(fee).eq(before) : after.eq(before)).to.be.true
+    )
+  })
+
+  it('Refund available after expiration', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain, secretHash)
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 60
+    const initiationTxId = await initiateAndVerify(chain, swapParams)
+    await expect(refundAndVerify(chain, initiationTxId, swapParams)).to.be.rejected
+    await mineBlock(chain, 3)
+    await refundAndVerify(chain, initiationTxId, swapParams)
+  })
+}
+
 function testFee(chain: Chain) {
   describe('Set Fee', () => {
     it('Initiate & Claim', async () => {
@@ -338,6 +380,11 @@ function testFee(chain: Chain) {
 
 describe('Swap Single Chain Flow', function () {
   this.timeout(TEST_TIMEOUT)
+
+  describe('Terra', () => {
+    testSwap(chains.terra)
+    testTerraRefund(chains.terra)
+  })
 
   describeExternal('Near - JS', () => {
     testSwap(chains.nearWithJs)
